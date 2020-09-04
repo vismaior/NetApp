@@ -25,19 +25,37 @@
 #include <errno.h>
 #include <netdb.h>		// freeaddrinfo()
 
+#include <Log.h>
+
 
 class TcpConnection
 {
 private:
     std::string ip;
     std::string port;
-    int sock;
-    struct addrinfo address_info, *res, *rp;
+    int sSock;
+    int cSock;
+    struct addrinfo address_info;
+    struct addrinfo *res;
+    struct addrinfo *rp;
+    struct sockaddr_in client_addr;
+
+    int connection();
 
 public:
     TcpConnection(std::string m_ip, std::string m_port);
-    int connect();
-    void server();
+    TcpConnection(const TcpConnection &)
+    {
+        Log::deb(__PRETTY_FUNCTION__);
+    }
+
+    ~TcpConnection()
+    {
+        Log::deb(__PRETTY_FUNCTION__);
+    }
+
+    void serverConnect();
+    void clientConnect();
     static constexpr int clientsCount = 100;
     static constexpr int bufferSize = 1024;
 };
